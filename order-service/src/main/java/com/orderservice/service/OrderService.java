@@ -5,9 +5,9 @@ import com.orderservice.model.*;
 import com.orderservice.model.OrderItemsList;
 import com.orderservice.repository.*;
 import lombok.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
+import org.springframework.web.reactive.function.client.*;
 
 import java.util.*;
 
@@ -17,18 +17,43 @@ import java.util.*;
 public class OrderService {
 
 private final OrderRepo repo;
+private  final WebClient.Builder webClient;
 private final OrderItemListRepo itemListRepo;
-public void createOrder(OrderRequest request) {
+public String createOrder(OrderRequest request) {
     List<OrderItemsList> orderItemsLists = request.getOrderItemsList()
                                                    .stream()
                                                    .map(p -> mapToRequest(p))
                                                    .toList();
+
+
     Order order= Order.builder()
                         .orderNumber(UUID.randomUUID().toString())
                          .orderItemsList(orderItemsLists)
                         .build();
-    repo.save(order);
+    List<String> skuCodes = request.getOrderItemsList()
+                                   .stream()
+                                   .map(e -> e.getSkuCode())
+                                   .toList();
+    InventoryResponse[] response = webClient.build().get()
+                                          .uri("http://INVENTORY-SERVICE/api/inventory",
+                                          uriBuilder -> uriBuilder.queryParam("skuCode",skuCodes).build())
+                                          .retrieve()
+                                          .bodyToMono(InventoryResponse[].class)
+                                          .block();
+    boolean result = Arrays.stream(response)
+                        .allMatch(e -> e.isInStock());
+    if (result) {
+        repo.save(order);
+        return "product is saved "+order.getId();
+    }
+    else
+    return "failed to save product";
 }
+
+
+
+
+
 
 private OrderItemsList mapToRequest(OrderItemsListRequest request) {
   return   OrderItemsList.builder()

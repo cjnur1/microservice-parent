@@ -4,10 +4,12 @@ import com.inventeryservice.model.*;
 import com.inventeryservice.repository.*;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.*;
 import org.springframework.context.annotation.*;
 import org.springframework.web.reactive.function.client.*;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class InventeryServiceApplication {
 
 	public static void main(String[] args) {
@@ -25,8 +27,8 @@ public CommandLineRunner load(InventoryRepo repo)
 	{
 		return args -> {
 			Inventory inv1 = Inventory.builder()
-									 .skuCode("iphone 12")
-									 .quantity(12)
+									 .skuCode("iphone12")
+									 .quantity(3)
 									 .build();
 			Inventory inv2 = Inventory.builder()
 									 .skuCode("tablet")
