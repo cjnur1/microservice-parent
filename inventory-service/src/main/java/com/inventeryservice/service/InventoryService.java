@@ -18,7 +18,9 @@ public class InventoryService {
 private final InventoryRepo repo;
 private final WebClient client;
 @Transactional(readOnly = true)
+@SneakyThrows
 public List<InventoryResponse> isInventoryAvailable(List<String> sku) {
+    Thread.sleep(10000);
     System.out.println(sku);
     List<Inventory> all = repo.findBySkuCodeIn(sku);
     List<InventoryResponse> inventoryResponses = all

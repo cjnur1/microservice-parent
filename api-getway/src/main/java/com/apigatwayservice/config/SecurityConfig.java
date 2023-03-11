@@ -15,35 +15,39 @@ import org.springframework.security.web.server.*;
 
 @Configuration
 @EnableWebFluxSecurity
-public class SecurityConfig   {
+public class SecurityConfig {
 @Bean
-public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity)
-{
-   return httpSecurity.csrf(crf->crf.disable())
-            .authorizeExchange(
-                    exchange->exchange.pathMatchers("/eureka/**","/api/product").authenticated()
-                                      //.pathMatchers("/api/product").authenticated()
-                                      .anyExchange().permitAll()
+public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity) {
+    return httpSecurity.csrf(crf -> crf.disable())
+                   .authorizeExchange(
+                           exchange -> exchange.pathMatchers("/eureka/**",
+                                           "/api/product")
+                                               .authenticated()
+                                               //.pathMatchers("/api/product").authenticated()
+                                               .anyExchange()
+                                               .permitAll()
 
 
-    //   ).formLogin().and().build();
-            ) . oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
-                  //.formLogin().and()
-                  .build();
+//                   )
+//                   .formLogin()
+//                   .and()
+//                   .build();
+     ) . oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
+    .build();
 }
-}
+
 //@Bean
-//public UserDetailsService userDetailsService(PasswordEncoder encoder)
-//{
+//public UserDetailsService userDetailsService(PasswordEncoder encoder) {
 //
 //    System.out.println("coled----------------->");
 //    return new InMemoryUserDetailsManager(User.builder()
-//                                                  .username("user")
+//                                                  .username("iuser")
 //                                                  .password(encoder.encode("123"))
 //                                                  .roles("ADMIN")
 //                                                  .build());
 //
 //}
+
 //
 //@Bean
 //public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -61,4 +65,4 @@ public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecu
 //{
 //    return new BCryptPasswordEncoder();
 //}
-//}
+}
